@@ -6,18 +6,10 @@
 
 F5 XC web application firewall
 
+
 ## Documentation
 
 Full documentation is available at **[https://f5xc-salesdemos.github.io/waf/](https://f5xc-salesdemos.github.io/waf/)**.
-
-## Getting Started
-
-```bash
-git clone https://github.com/f5xc-salesdemos/waf.git
-```
-
-See the [documentation](https://f5xc-salesdemos.github.io/waf/) for detailed setup
-and usage guides.
 
 ## Contributing
 
