@@ -20,7 +20,6 @@
 
 F5 XC web application firewall
 
-
 ## Documentation
 
 Full documentation is available at **[https://f5-sales-demo.github.io/waf/](https://f5-sales-demo.github.io/waf/)**.
