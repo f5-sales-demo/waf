@@ -1,11 +1,93 @@
 ---
-title: WAF
-description: Web application firewall configuration and policies for F5 Distributed Cloud.
-hero:
-  tagline: Web application firewall configuration and policies.
-  image:
-    html: '<img src="/waf/images/hero.svg" alt="F5 XC WAF" />'
-sidebar:
-  hidden: true
-  order: 0
+title: F5 Distributed Cloud Web Application Firewall
+description: Web Application Firewall (WAF) architecture, threat campaigns, signature inspection, and declarative policy management.
 ---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+The **F5 Distributed Cloud Web Application Firewall** (WAF) delivers Layer 7 application security across multi-cloud and hybrid edge environments. Powered by the F5 Advanced WAF engine, it protects web applications and REST APIs against the OWASP Top 10 vulnerabilities, zero-day exploits, and malicious request patterns.
+
+## Architecture & Inspection Flow
+
+```text
++-------------------------------------------------------------------------+
+|                    F5 Distributed Cloud Global Edge                     |
+|                                                                         |
+|  Client Request                                                         |
+|        |                                                                |
+|        v                                                                |
+|  +-------------------------------------------------------------------+  |
+|  | Protocol & Parsing: HTTP/1.1, HTTP/2, JSON, XML, Multipart Forms  |  |
+|  +---------------------------------+---------------------------------+  |
+|                                    |                                    |
+|                                    v                                    |
+|  +-------------------------------------------------------------------+  |
+|  | Threat Campaign Inspection: High-confidence active exploit feeds  |  |
+|  +---------------------------------+---------------------------------+  |
+|                                    |                                    |
+|                                    v                                    |
+|  +-------------------------------------------------------------------+  |
+|  | Signature Engine: SQLi, XSS, RFI/LFI, Command Injection, SSRF     |  |
+|  +---------------------------------+---------------------------------+  |
+|                                    |                                    |
+|                                    v                                    |
+|  +-------------------------------------------------------------------+  |
+|  | Policy Enforcement: Monitoring (Staging) vs Blocking Actions     |  |
+|  +---------------------------------+---------------------------------+  |
+|                                    |                                    |
+|         +--------------------------+--------------------------+         |
+|         | Pass                                                | Block   |
+|         v                                                     v         |
+|  +-----------------------------+               +---------------------+  |
+|  | Forward to Protected Origin |               | Custom Block Page   |  |
+|  | Server Workload             |               | (HTTP 403 Forbidden)|  |
+|  +-----------------------------+               +---------------------+  |
++-------------------------------------------------------------------------+
+```
+
+## Core Capabilities
+
+<CardGrid>
+  <Card title="Threat Campaigns" icon="seti:shield">
+    Immediate mitigation of newly published high-profile CVE exploits without generating false positives.
+  </Card>
+  <Card title="Signature Inspection" icon="document">
+    Comprehensive coverage across SQL injection, cross-site scripting (XSS), command injection, and traversal attacks.
+  </Card>
+  <Card title="Staging & Safe Rollout" icon="star">
+    Validate rule accuracy in monitoring mode before transitioning to active blocking enforcement.
+  </Card>
+  <Card title="Declarative Automation" icon="puzzle">
+    Manage WAF policies via Terraform (`xcsh_app_firewall`), xcsh CLI, or OpenAPI endpoints.
+  </Card>
+</CardGrid>
+
+## Policy Modes
+
+| Mode | Behavior | Telemetry Generated | Recommended Use Case |
+| :--- | :--- | :--- | :--- |
+| **Monitoring (Staging)** | Requests matching attack signatures are logged with full violation details but allowed to pass to the origin. | Violation event with `action: monitor`. | Initial policy baseline and rule tuning. |
+| **Blocking** | Requests matching attack signatures are immediately rejected with a customizable HTTP 403 Forbidden response. | Violation event with `action: block`. | Active production protection. |
+
+## Declarative Configuration Example
+
+```hcl
+resource "xcsh_app_firewall" "production_waf" {
+  name      = "production-waf-policy"
+  namespace = "production"
+
+  # Enforcement Mode
+  blocking = true
+
+  # Threat Campaigns
+  threat_campaigns {
+    enabled = true
+  }
+
+  # Default Bot Protection
+  default_bot_setting = true
+
+  # Default Attack Signatures
+  default_anonymization = true
+}
+```

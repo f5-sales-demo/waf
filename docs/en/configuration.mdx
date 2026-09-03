@@ -1,0 +1,26 @@
+---
+title: WAF Policy Configuration
+description: Detailed configuration guide for signatures, exclusions, and custom violation responses.
+---
+
+## Attack Signature Configuration
+
+F5 Distributed Cloud WAF groups attack signatures by attack type and technology stack:
+
+- **Command Execution** (Unix, Windows, PowerShell)
+- **SQL Injection** (MySQL, PostgreSQL, Oracle, MSSQL)
+- **Cross-Site Scripting** (DOM-based, Reflected, Stored)
+- **Server-Side Request Forgery** (SSRF)
+- **Path Traversal & Local File Inclusion** (LFI)
+
+### Signature Exclusions
+
+To suppress false positives on specific URI paths or query parameters, configure exclusion rules:
+
+```json
+{
+  "path": "/api/v1/search",
+  "parameter": "query",
+  "signature_ids": [200001423, 200002105]
+}
+```
